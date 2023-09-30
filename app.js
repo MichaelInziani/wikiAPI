@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
-const _ = require('lodash');
+const _ = require('lodash'); 
 
 const app = express();
 
