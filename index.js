@@ -2,24 +2,33 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import _ from "lodash";
+import ejs from "ejs";
 import "dotenv/config";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set("view engine", "ejs");
+ 
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(express.static("public"));
 
 //CONNECT MONGOOSE
+mongoose.set("strictQuery", true);
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+};
+
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI);
+        const conn = await mongoose.connect(process.env.MONGO_URI, options);
         console.log(`MongoDB Connected: ${conn.connection.host}`);
 
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
         process.exit(1);
 
     }
@@ -30,6 +39,7 @@ const connectDB = async () => {
   //  await mongoose.connect('mongodb://127.0.0.1:27017/wikiDB');
 //}
 //mongoose.connect('mongodb://127.0.0.1:27017/wikiDB');
+
 
 //CREATE A SCHEMA
 const { Schema } = mongoose;
@@ -63,7 +73,7 @@ app.route("/articles")
             const newArticle = new Article({
                 title: req.body.title,
                 content: req.body.content
-            })
+            });
             await newArticle.save();
             res.send("Successfuly added a new article.");
             console.log(newArticle);
@@ -171,5 +181,5 @@ connectDB().then(() => {
     });
 });
 //app.listen(3000, function () {
-   // console.log(`Listening for requests on port ${3000}`);
+   // console.log(`Listening for requests on port ${PORT}`);
 //});
